@@ -1,9 +1,10 @@
+
 # API Gateway Dockerfile - Using debian base for glibc compatibility
 FROM node:24-slim
 
 # Build args to handle arch-aware download of WhatsApp binary
 ARG TARGETARCH
-ARG WHATSAPP_VERSION=7.8.0
+ARG WHATSAPP_VERSION=9.9.0
 
 # Declare ARGs again to make them available in RUN
 ARG TARGETARCH
@@ -21,19 +22,17 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-
-# Copy package files e tsconfig
+# Copy package files and tsconfig
 COPY package*.json ./
 COPY tsconfig.json ./
 
-
-# Instala dependências (inclui devDependencies para build)
+# Install dependencies (including devDependencies for build)
 RUN npm ci
 
 # Download and setup go-whatsapp-web-multidevice binary (arch-aware)
 # TARGETARCH values are typically: amd64 | arm64
 RUN set -eux; \
-    WHATSAPP_VERSION="7.8.0"; \
+    WHATSAPP_VERSION="${WHATSAPP_VERSION}"; \
     if [ "$TARGETARCH" = "arm64" ]; then \
         ARCH_SUFFIX="arm64"; \
         FOLDER_NAME="linux-arm64"; \
@@ -41,7 +40,7 @@ RUN set -eux; \
         ARCH_SUFFIX="amd64"; \
         FOLDER_NAME="linux-amd64"; \
     fi; \
-    echo "Downloading WhatsApp binary for architecture: $TARGETARCH (${ARCH_SUFFIX})"; \
+    echo "Downloading WhatsApp binary version ${WHATSAPP_VERSION} for architecture: $TARGETARCH (${ARCH_SUFFIX})"; \
     wget -O whatsapp_linux_${ARCH_SUFFIX}.zip \
       "https://github.com/aldinokemal/go-whatsapp-web-multidevice/releases/download/v${WHATSAPP_VERSION}/whatsapp_${WHATSAPP_VERSION}_linux_${ARCH_SUFFIX}.zip"; \
     unzip whatsapp_linux_${ARCH_SUFFIX}.zip; \
@@ -49,18 +48,16 @@ RUN set -eux; \
     chmod +x whatsapp; \
     rm -f whatsapp_linux_${ARCH_SUFFIX}.zip readme.md
 
+# Copy application files
 COPY src ./src
 COPY openapi.yaml ./openapi.yaml
 COPY docs ./docs
 
-
 # Build TypeScript
 RUN npm run build
 
-# Remove devDependencies para imagem final enxuta
+# Remove devDependencies for smaller production image
 RUN npm prune --production
-
-# Copy schema.sql to dist (garantido pelo postbuild)
 
 # Create necessary directories
 RUN mkdir -p /app/data/volumes /app/data/sessions /app/logs
@@ -91,5 +88,5 @@ ENV SESSIONS_DIR=/app/data/sessions
 ENV VOLUMES_DIR=/app/data/volumes
 ENV APP_BASE_DIR=/app
 
-# Start command (TypeScript build)
+# Start command
 CMD ["node", "dist/server.js"]
