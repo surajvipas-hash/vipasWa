@@ -36,7 +36,7 @@ function generateOpenAPIFromApp(app: any): any {
 
   // Update the base document with dynamic server URL
   baseDoc.servers = [
-    { url: process.env.SERVER_URL || 'http://localhost:3000', description: 'Servidor de desenvolvimento' }
+    { url: process.env.SERVER_URL || 'https://vipaswa-production.up.railway.app', description: 'Servidor de desenvolvimento' }
   ];
 
   // Reorganizar tags - Gateway e Device Management primeiro
@@ -632,7 +632,7 @@ function createFallbackStructure(): any {
       description: "API para envio de mensagens WhatsApp com suporte a múltiplos dispositivos e webhooks de status.\n\n## Webhooks de Status\n\nEste sistema suporta webhooks para notificações de status dos dispositivos:\n\n### Configuração\n- `statusWebhook`: URL para receber notificações de status\n- `statusWebhookSecret`: Chave secreta para assinatura HMAC-SHA256\n\n### Eventos Suportados\n- **login_success**: Dispositivo conectado com sucesso\n- **connected**: Dispositivo pronto para uso\n- **disconnected**: Dispositivo desconectado\n\n- **auth_failed**: Falha na autenticação\n- **container_event**: Outros eventos do container\n\n### Formato do Webhook\n```json\n{\n  \"device\": {\n    \"deviceHash\": \"a1b2c3d4e5f67890\",\n    \"status\": \"active\"\n  },\n  \"event\": {\n    \"type\": \"connected\",\n    \"code\": \"LIST_DEVICES\",\n    \"message\": \"Device connected and ready\"\n  },\n  \"timestamp\": \"2024-01-01T12:00:00.000Z\"\n}\n```\n\n### Verificação de Assinatura\nSe `statusWebhookSecret` foi configurado, o header `X-Webhook-Signature` conterá a assinatura HMAC-SHA256 do payload."
     },
     servers: [
-      { url: "http://localhost:3000" }
+      { url: "https://vipaswa-production.up.railway.app" }
     ],
     tags: [
       { name: "Gateway", description: "Autenticação e saúde do gateway" },
@@ -661,7 +661,7 @@ function createFallbackStructure(): any {
               type: "object",
               properties: {
                 qr_duration: { type: "integer", example: 30 },
-                qr_link: { type: "string", example: "http://localhost:3000/statics/images/qrcode/scan-qr-b0b7bb43-9a22-455a-814f-5a225c743310.png" }
+                qr_link: { type: "string", example: "https://vipaswa-production.up.railway.app/statics/images/qrcode/scan-qr-b0b7bb43-9a22-455a-814f-5a225c743310.png" }
               }
             }
           }

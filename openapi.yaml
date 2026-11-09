@@ -4,7 +4,7 @@ info:
   version: 6.12.0
   description: This API is used for sending whatsapp via API
 servers:
-  - url: http://localhost:3000
+  - url: https://vipaswa-production.up.railway.app
 tags:
   - name: app
     description: Initial Connection to Whatsapp server
@@ -2792,7 +2792,7 @@ components:
               example: 30
             qr_link:
               type: string
-              example: 'http://localhost:3000/statics/images/qrcode/scan-qr-b0b7bb43-9a22-455a-814f-5a225c743310.png'
+              example: 'https://vipaswa-production.up.railway.app/statics/images/qrcode/scan-qr-b0b7bb43-9a22-455a-814f-5a225c743310.png'
     GenericResponse:
       type: object
       properties:
